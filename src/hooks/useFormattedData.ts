@@ -10,13 +10,11 @@ export const useFormattedData = (initialData: User[]) => {
       Object.values(user).some((value) => value.toString().toLowerCase().includes(searchTerm.toLowerCase()))
     );
     setFormattedData(filteredData);
-    return useFormattedData(filteredData);
   };
 
   const filter = (predicate: Predicate<User>) => {
     const filteredData = data.filter(predicate);
     setFormattedData(filteredData);
-    return useFormattedData(filteredData);
   };
 
 const sortBy = (filterCriteria: string | SortingFunction<User>) => {
@@ -27,7 +25,6 @@ const sortBy = (filterCriteria: string | SortingFunction<User>) => {
     sortedData = [...formattedData].sort(filterCriteria);
   }
   setFormattedData(sortedData);
-  return useFormattedData(sortedData);
 };
 
   useEffect(() => {

@@ -3,7 +3,7 @@ export type User = {
   firstName: string;
   lastName: string;
   email: string;
-  gender: 'Male' | 'Female';
+  gender: string;
   zip: number;
   birthdate: string;
   city: string;

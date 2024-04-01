@@ -1,8 +1,9 @@
-import{ useEffect } from 'react';
+import { useEffect } from 'react';
+import { useFormattedData } from './hooks/useFormattedData';
 import users from './users.json';
-import  { useFormattedData }  from './hooks/useFormattedData';
 
 const App = () => {
+  //@ts-ignore
   const { formatted, sortBy, filter, search } = useFormattedData(users);
 
 
@@ -13,9 +14,9 @@ const App = () => {
   }, []);
 
   return (
-    <div>
+    <div id='data'>
       {formatted.map(({ id, firstName, lastName, birthdate }) => (
-        <div key={id}>
+        <div className='info' key={id}>
           <div>
             {firstName} {lastName}
           </div>
