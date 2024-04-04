@@ -3,14 +3,13 @@ import { useFormattedData } from './hooks/useFormattedData';
 import users from './users.json';
 
 const App = () => {
-  //@ts-ignore
   const { formatted, sortBy, filter, search } = useFormattedData(users);
 
 
   useEffect(() => {
     search('anderson');
     filter(({ zip }) => zip > 486);
-     sortBy('firstName');
+     sortBy('birthdate');
   }, []);
 
   return (
