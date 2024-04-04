@@ -1,5 +1,5 @@
-import {useEffect, useMemo, useState} from 'react';
-import {Predicate, SortingFunction} from '../types';
+import { useEffect, useMemo, useState } from 'react';
+import { Predicate, SortingFunction } from '../types';
 
 export const useFormattedData = <T extends object>(initialData: T[]) => {
   const [formattedData, setFormattedData] = useState<T[]>(initialData);
@@ -22,14 +22,15 @@ export const useFormattedData = <T extends object>(initialData: T[]) => {
     let sortedData;
     if (typeof filterCriteria === 'string') {
       sortedData = [...formattedData].sort((a, b) =>
-       a[filterCriteria] > b[filterCriteria] ? 1 : b[filterCriteria] > a[filterCriteria] ? -1 : 0);
+        a[filterCriteria] > b[filterCriteria] ? 1 : b[filterCriteria] > a[filterCriteria] ? -1 : 0
+      );
       setFormattedData(sortedData);
       return;
     }
     if (typeof filterCriteria === 'function') {
       sortedData = [...formattedData].sort(filterCriteria);
-       setFormattedData(sortedData);
-       return;
+      setFormattedData(sortedData);
+      return;
     }
     throw new Error('Unsupported type!');
   };

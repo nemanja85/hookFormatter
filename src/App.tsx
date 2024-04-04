@@ -5,17 +5,16 @@ import users from './users.json';
 const App = () => {
   const { formatted, sortBy, filter, search } = useFormattedData(users);
 
-
   useEffect(() => {
     search('anderson');
     filter(({ zip }) => zip > 486);
-     sortBy('birthdate');
+    sortBy('birthdate');
   }, []);
 
   return (
-    <div id='data'>
+    <div id="data">
       {formatted.map(({ id, firstName, lastName, birthdate }) => (
-        <div className='info' key={id}>
+        <div className="info" key={id}>
           <div>
             {firstName} {lastName}
           </div>
@@ -25,4 +24,4 @@ const App = () => {
     </div>
   );
 };
- export default App;
+export default App;

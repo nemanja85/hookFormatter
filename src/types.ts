@@ -9,5 +9,5 @@ export type User = {
   city: string;
 };
 
-export type SortingFunction<T> = (a: T , b: T) => number;
+export type SortingFunction<T> = (a: T, b: T) => number;
 export type Predicate<T> = (item: T) => boolean;
