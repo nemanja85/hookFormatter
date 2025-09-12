@@ -17,14 +17,16 @@ body {
 
 #root div {
   display: flex;
+  align-items: center;
 }
 
 #root #data {
   flex-direction: column;
   width: 350px;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 18px;
   line-height: 1.5;
-  font-weight: 400;
+  font-weight: 500;
   color: rgba(255, 255, 255, 0.87);
 }
 

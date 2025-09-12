@@ -1,22 +1,32 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Predicate, SortingFunction } from '../types';
 
 export const useFormattedData = <T extends object>(initialData: T[]) => {
   const [formattedData, setFormattedData] = useState<T[]>(initialData);
 
   const search = <T>(searchTerm: string) => {
-    const searchedData = formattedData.filter((x) =>
-      Object.values(x).some((value: any) => value.toString().toLowerCase().includes(searchTerm.toLowerCase()))
+    const searchedData = formattedData.filter(item =>
+      Object.values(item).some(value => {
+        if (value === null || value === undefined) {
+          return false;
+        }
+        return String(value).toLowerCase().includes(searchTerm.toLowerCase());
+      })
     );
     setFormattedData(searchedData);
   };
 
-  const filter = useMemo(() => {
+  const filter = useCallback(() => {
     return (predicate: Predicate<T>) => {
+      if (typeof predicate !== 'function') {
+        console.error('Predicate have to be function for filtering');
+        return;
+      }
+
       const filteredData = formattedData.filter(predicate);
       setFormattedData(filteredData);
     };
-  }, [initialData]);
+  }, [initialData, setFormattedData]);
 
   const sortBy = (filterCriteria: keyof T | SortingFunction<T>) => {
     let sortedData;
