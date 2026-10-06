@@ -1,53 +1,51 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Predicate, SortingFunction } from '../types';
+import { useCallback, useMemo, useState } from "react";
+import type { Predicate, SortingFunction } from "../types";
 
-export const useFormattedData = <T extends object>(initialData: T[]) => {
-  const [formattedData, setFormattedData] = useState<T[]>(initialData);
+type SortCriteria<T> = keyof T | SortingFunction<T>;
 
-  const search = <T>(searchTerm: string) => {
-    const searchedData = formattedData.filter(item =>
-      Object.values(item).some(value => {
-        if (value === null || value === undefined) {
-          return false;
-        }
-        return String(value).toLowerCase().includes(searchTerm.toLowerCase());
-      })
-    );
-    setFormattedData(searchedData);
-  };
+export function useFormattedData<T extends object>(initialData: T[]) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [predicate, setPredicate] = useState<Predicate<T> | null>(null);
+  const [sortCriteria, setSortCriteria] = useState<SortCriteria<T> | null>(null);
 
-  const filter = useCallback(() => {
-    return (predicate: Predicate<T>) => {
-      if (typeof predicate !== 'function') {
-        console.error('Predicate have to be function for filtering');
-        return;
-      }
+  const formatted = useMemo(() => {
+    let result = initialData;
 
-      const filteredData = formattedData.filter(predicate);
-      setFormattedData(filteredData);
-    };
-  }, [initialData, setFormattedData]);
-
-  const sortBy = (filterCriteria: keyof T | SortingFunction<T>) => {
-    let sortedData;
-    if (typeof filterCriteria === 'string') {
-      sortedData = [...formattedData].sort((a, b) =>
-        a[filterCriteria] > b[filterCriteria] ? 1 : b[filterCriteria] > a[filterCriteria] ? -1 : 0
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase();
+      result = result.filter((item) =>
+          Object.values(item).some((value) => {
+            if (value === null || value === undefined) return false;
+            return String(value).toLowerCase().includes(term);
+          }),
       );
-      setFormattedData(sortedData);
-      return;
     }
-    if (typeof filterCriteria === 'function') {
-      sortedData = [...formattedData].sort(filterCriteria);
-      setFormattedData(sortedData);
-      return;
+
+    if (predicate) {
+      result = result.filter(predicate);
     }
-    throw new Error('Unsupported type!');
-  };
 
-  useEffect(() => {
-    setFormattedData(formattedData);
-  }, [formattedData]);
+    if (sortCriteria) {
+      result = [...result].sort((a, b) => {
+        if (typeof sortCriteria === "function") return sortCriteria(a, b);
+        const av = a[sortCriteria];
+        const bv = b[sortCriteria];
+        if (av === bv) return 0;
+        return av > bv ? 1 : -1;
+      });
+    }
 
-  return { formatted: formattedData, search, filter, sortBy };
-};
+    return result;
+  }, [initialData, searchTerm, predicate, sortCriteria]);
+
+  const search = useCallback((term: string) => setSearchTerm(term), []);
+  const filter = useCallback((p: Predicate<T>) => setPredicate(() => p), []);
+  const sortBy = useCallback((c: SortCriteria<T>) => setSortCriteria(c), []);
+  const reset = useCallback(() => {
+    setSearchTerm("");
+    setPredicate(null);
+    setSortCriteria(null);
+  }, []);
+
+  return { formatted, search, filter, sortBy, reset };
+}
